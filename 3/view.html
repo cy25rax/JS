@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .data {
+        display: flex;
+        flex-direction: column;
+      }
+      p {
+        padding-left: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <a href="index.html">index</a>
+    <div class="data"></div>
+
+    <script>
+      const divData = document.querySelector(".data");
+
+      for (let index = 0; index < sessionStorage.length; index++) {
+        const newDiv = document.createElement("div");
+        divData.append(newDiv);
+        const element = sessionStorage.key(index);
+        const hElt = document.createElement("h2");
+        hElt.setAttribute("class", "title");
+        // ставим флаг что список закрыт
+        hElt.setAttribute("checked", "false");
+        hElt.textContent = element;
+        newDiv.append(hElt);
+
+        // название продукта кот под собой содержит все отзывы по данному продукту
+        // при клике на кот открываются закрываются отзывы
+        hElt.addEventListener("click", () => {
+          if (hElt.getAttribute("checked") === "false") {
+            // ставим флаг что список открыт
+            hElt.setAttribute('checked', 'true')
+            sessionStorage.getItem(element).split(";").forEach((elmt) => {
+                const pElement = document.createElement("p");
+                hElt.parentElement.append(pElement);
+                pElement.textContent = elmt;
+
+                // добавляем к каждому отзыву листнер по кот его можно удалить
+                pElement.addEventListener("click", () => {
+                  const key = pElement.parentElement.firstElementChild.textContent;
+                  const value = sessionStorage.getItem(key).replace(elmt,'');
+                  sessionStorage.setItem(key, value);
+                  pElement.remove();
+                });
+            });
+          } else {
+            // рекурсия для удаления с экрана всех отзывов данного продукта
+            function removeNextElementSibling() {
+                if (hElt.nextElementSibling != null) {
+                    hElt.nextElementSibling.remove()
+                    removeNextElementSibling()
+                } else {
+                    return
+                }
+            }
+            removeNextElementSibling();
+            // ставим флаг что список закрыт
+            hElt.setAttribute('checked', 'false')
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

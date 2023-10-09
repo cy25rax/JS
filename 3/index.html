@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .data {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        width: 200px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="data">
+      <a href="view.html">view</a>
+      <input type="text" name="" id="title" />
+      <input type="text" name="" id="text" />
+      <button id="save">save</button>
+    </div>
+    <script>
+      const title = document.querySelector("#title");
+      const save = document.querySelector("#save");
+      const text = document.querySelector("#text");
+
+      save.addEventListener("click", () => {
+        const str = sessionStorage.getItem(title.value)
+        if (str === null ) {
+          sessionStorage.setItem(title.value, text.value)
+        } else {
+          sessionStorage.setItem(title.value, str + ';' + text.value)
+        }
+      });
+    </script>
+  </body>
+</html>
