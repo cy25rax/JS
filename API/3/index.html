@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="Container">
+      <a class="imgLink" href="#">
+        <img alt="" class="image"/>
+      </a>
+    </div>
+    <p class="imageDetails">Photo by <a class="creator" href="#">NAME</a></p>
+    <span>
+        <button>like</button> like this photographer 
+        <span class="like"></span>
+    </span>
+    <p>like average <span class="count"></span></p>
+
+    <script>
+        const clientId = 'W1Jmfh7KzdoOmRAXbHn62HEwC2x6JtlgxHD7fUuGseQ'
+
+        const imageElement = document.querySelector(".image");
+        const imageLink = document.querySelector(".imgLink");
+        const creator = document.querySelector('.creator')
+        const button = document.querySelector('button')
+        const counterElt =  document.querySelector('.count')
+        const likeElt =  document.querySelector('.like')
+        let creatorName
+        let map = new Map()
+        let counter = 0
+        counterElt.textContent = sessionStorage.getItem('counter')
+
+        button.addEventListener('click', () => {
+            if (sessionStorage.getItem('counter')) counter = sessionStorage.getItem('counter')
+            counter++
+
+            if (map.has(creatorName)) {
+                map.set(creatorName, !map.get(creatorName))
+            } else {
+                map.set(creatorName, true)
+            }
+            sessionStorage.setItem(creatorName, map.get(creatorName))
+
+            likeElt.textContent = map.get(creatorName)
+            counterElt.textContent = counter
+            sessionStorage.setItem('counter', counter)
+        })
+
+        fetch(`https://api.unsplash.com/photos/random?client_id=${clientId}`)
+            .then((response) => response.json())
+            .then((jsonData) => {
+                imageElement.src = jsonData.urls.small;
+                imageLink.setAttribute("href", jsonData.links.html);
+                creatorName = jsonData.user.name
+                if (map.has(creatorName)) {
+                    likeElt.textContent = map.get(creatorName)
+                } else {
+                    likeElt.textContent = false
+                }
+                creator.innerText = creatorName;
+                creator.setAttribute("href", jsonData.user.portfolio_url);
+            })
+            .catch((error) => {
+                console.log("Error: " + error);
+            });
+    </script>
+</body>
+</html>
